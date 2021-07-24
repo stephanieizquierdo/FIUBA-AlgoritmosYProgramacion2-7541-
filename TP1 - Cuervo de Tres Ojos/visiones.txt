@@ -1,0 +1,6 @@
+Jon Snow;Stark;Le dicen que no sabe nada;P
+Daenerys Targaryen;Targaryen;Se convierte en la madre de dragones;P
+Daenerys Targaryen;Targaryen;Viaja a Poniente;F
+Jon Snow;Stark;¡Era por abajo Pacacio!;F
+Tyrion Lannister;Lannister;Mata a su propio padre;F
+Jon Snow;Stark;Se une a la Guardia de la Noche;P
