@@ -52,18 +52,16 @@ int main(){
 
 	westeros_t* westeros = inicializar_westeros();
 	if(!westeros){
+		mensaje_de_error()
 		return 0;
 	}
-
 	char opcion;
 	mensaje_de_bienvenida();
-
 	do{
 		opciones();
 		scanf(" %c", &opcion);
-	
+
 	    if(opcion == AGREGAR_CASA){
-	
 	    	char nombre_archivo[MAX_NOMBRE];
 	    	printf("Ingrese el nombre del archivo: ");
 	    	scanf(" %s", nombre_archivo);
@@ -78,26 +76,23 @@ int main(){
 	    		mensaje_de_error();
 	    	}
 	    }
-
-	   else if(opcion == SIMULACION){
+	    else if(opcion == SIMULACION){
 	   		int anios;
 	    	obtener_anios(&anios);
 			simulacion(westeros, anios) == EXITO? mensaje_exitoso(): mensaje_de_error();
 	    }
-	    
 	    else if(opcion == LISTAR){
 			listar(westeros) == EXITO? mensaje_exitoso(): mensaje_de_error();
 	    }
 	    else if(opcion == EXTINTOS){
 	    	extintos(westeros) == EXITO? mensaje_exitoso(): mensaje_de_error();
-	
 	    }
 	    else if(opcion == QUIT){
 	    	destruir_westeros(westeros);
 	    }
-	    else
+		else{
 	    	mensaje_de_ayuda();
+		}
 	}while(opcion != QUIT);
-	
 	return 0;
 }

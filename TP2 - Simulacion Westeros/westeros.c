@@ -27,6 +27,9 @@ extern char* strdup(const char*);
 
 #define EDAD_DE_MUERTE 60
 
+#define MAYOR 1
+#define MENOR -1
+#define IGUAL 0
 
 typedef struct persona{
 	char nombre[MAX_NOMBRE];
@@ -59,18 +62,17 @@ int comparar_casas(void* casa1, void* casa2){
     if(!casa1 || !casa2)
 	return 0;
 
-    if( strcmp( ((casa_t*)casa1)->nombre, ((casa_t*)casa2)->nombre ) > 0)
-    	return 1;
-    if( strcmp( ((casa_t*)casa1)->nombre,((casa_t*)casa2)->nombre ) < 0 )
-		return -1;
-    return 0;
+    if (strcmp( ((casa_t*)casa1)->nombre, ((casa_t*)casa2)->nombre ) > 0)
+    	return MAYOR;
+    if (strcmp( ((casa_t*)casa1)->nombre,((casa_t*)casa2)->nombre ) < 0 )
+		return MENOR;
+    return IGUALES;
 }
 
 void destruir_casa(casa_t* casa){
     if(casa){
     	if(casa->comunidad){
     		for(size_t i= 0; i< casa->cantidad_de_personas; i++){
-
 				free(lista_ultimo(casa->comunidad));
 				lista_borrar(casa->comunidad);
 			}
@@ -107,7 +109,7 @@ casa_t* inicializar_casa(){
  *Inicializa una persona guardando la memoria necesaria para ello
  */
 persona_t* inicializar_persona(){
-	persona_t* persona= (persona_t*)calloc(1,sizeof(persona_t));
+	persona_t* persona = (persona_t*)calloc(1,sizeof(persona_t));
 	if(!persona)
 		return NULL;
 	return persona;
@@ -170,9 +172,8 @@ casa_t* existe_casa(westeros_t* westeros, casa_t* casa){
  * o ERROR_APERTURA_ARCHIVO(-2) si no se pudo abrir el archivo.
  */
 int agregar_casas(westeros_t* westeros, char* nombre_archivo){
-
 	FILE* westeros_file;
-	westeros_file = fopen(nombre_archivo,LECTURA);  
+	westeros_file = fopen(nombre_archivo,LECTURA);
 	if(!westeros_file){
 		return ERROR_APERTURA_ARCHIVO;
 	}
@@ -184,15 +185,14 @@ int agregar_casas(westeros_t* westeros, char* nombre_archivo){
 	char identificador = buf[0];
 
 	while(lei && agregue == EXITO){
-		identificador = buf[0];		
+		identificador = buf[0];
 
 		if(identificador == CASA){
 			casa_actual = inicializar_casa();
 			if(!casa_actual){
 				return ERROR;
 			}
-			
-			int leido_casa= sscanf(buf, FORMATO_CASAS, (casa_actual->nombre), &(casa_actual->factor_envejecimiento), &(casa_actual->factor_nacimiento));
+			int leido_casa = sscanf(buf, FORMATO_CASAS, (casa_actual->nombre), &(casa_actual->factor_envejecimiento), &(casa_actual->factor_nacimiento));
 			casa_t* existente = existe_casa(westeros, casa_actual);
 
 			if(!existente && leido_casa == CANT_CORRECTA_CASA){
@@ -209,7 +209,6 @@ int agregar_casas(westeros_t* westeros, char* nombre_archivo){
 			if(!persona){
 				return ERROR;
 			}
-
 			int leido_persona = sscanf(buf, FORMATO_PERSONAS, persona->nombre, &persona->edad);
 			if(leido_persona == CANT_CORRECTA_PERSONA && casa_actual){
 				agregue = agregar_persona(casa_actual->comunidad, persona);
@@ -219,7 +218,6 @@ int agregar_casas(westeros_t* westeros, char* nombre_archivo){
 		}
 		lei = fgets(buf, TAM_BUFFER, westeros_file);
 	}
-
 	fclose(westeros_file);
 	return agregue;
 }
@@ -232,12 +230,10 @@ int agregar_casas(westeros_t* westeros, char* nombre_archivo){
  */
 void elegir_casa_ganadora(westeros_t* westeros, casa_t* casa_nueva){
 	if(casa_nueva->cantidad_de_personas > 0){
-
-		if(westeros->casa_ganadora==NULL){
+		if(!westeros->casa_ganadora){
 			westeros->casa_ganadora = casa_nueva->nombre;
 			westeros->casa_ganadora_integrantes= casa_nueva->cantidad_de_personas;
 		}
-
 		if(casa_nueva->cantidad_de_personas > westeros->casa_ganadora_integrantes){
 			westeros->casa_ganadora = casa_nueva->nombre;
 			westeros->casa_ganadora_integrantes = casa_nueva->cantidad_de_personas;
@@ -252,33 +248,28 @@ int nacimientos(westeros_t* westeros, casa_t* casa, FILE* nombre_de_bebes){
 	if(casa->factor_nacimiento == 0){
 		return EXITO;
 	}
-
 	int nuevos_integrantes = (casa->cantidad_de_personas)/casa->factor_nacimiento;
 
 	int agregue = EXITO;
-	int i= 0;
+	int i = 0;
 	int resultado;
 
 	while(i < nuevos_integrantes && agregue==EXITO){
-
 		persona_t* persona = inicializar_persona();
 		if(!persona){
 			return ERROR;
 		}
+		resultado = fscanf(nombre_de_bebes, FORMATO_NOMBRES, persona->nombre);
 
-		resultado= fscanf(nombre_de_bebes, FORMATO_NOMBRES, persona->nombre);
-
-		if(resultado==EOF){
+		if(resultado == EOF){
 			rewind(nombre_de_bebes);
-			resultado= fscanf(nombre_de_bebes, FORMATO_NOMBRES, persona->nombre);
+			resultado = fscanf(nombre_de_bebes, FORMATO_NOMBRES, persona->nombre);
 		}
-
-		agregue= lista_insertar(casa->comunidad, (void*)persona);
+		agregue = lista_insertar(casa->comunidad, (void*)persona);
 
 		(casa->cantidad_de_personas)++;
 		i++;
 	}
-
 	return agregue;
 }
 
@@ -295,7 +286,7 @@ int actualizar_edades(casa_t* casa){
 	for(size_t pos=0; pos < casa->cantidad_de_personas; pos++){
 		persona_t* persona = (persona_t*)lista_elemento_en_posicion(casa->comunidad, pos);
 		(persona->edad) += (casa->factor_envejecimiento);
-	
+
 		if(persona->edad >= EDAD_DE_MUERTE){
 			estado = lista_borrar_de_posicion(casa->comunidad, pos);
 			free(persona);
@@ -314,7 +305,6 @@ void borrar_y_encolar_casas_extintas(westeros_t* westeros, casa_t* array_de_casa
 	int cant_de_casas = westeros->cant_casas;
 
 	for(int i=0; i<cant_de_casas; i++){
-
 		if(array_de_casas[i]->cantidad_de_personas == 0){
 			lista_destruir(array_de_casas[i]->comunidad);
 			array_de_casas[i]->comunidad = NULL;
@@ -359,31 +349,29 @@ int simulacion(westeros_t* westeros, int anios_pedidos){
 	if(!nombre_de_bebes){
 		return ERROR;
 	}
-
 	int anios_transcurridos=0;
 
 	casa_t* array_de_casas[westeros->cant_casas];
 	arbol_recorrido_inorden(westeros->reino, (void*)array_de_casas, westeros->cant_casas);
 
 	while(anios_transcurridos < anios_pedidos && estado == EXITO){
-		westeros->casa_ganadora=NULL;
+		westeros->casa_ganadora = NULL;
 		westeros->casa_ganadora_integrantes=0;
-		for(int i= 0; i<westeros->cant_casas; i++){
 
-			estado= actualizar_edades(array_de_casas[i]);
+		for(int i = 0; i<westeros->cant_casas; i++){
+			estado = actualizar_edades(array_de_casas[i]);
 			if(array_de_casas[i]->cantidad_de_personas >0){
-				estado= nacimientos(westeros, array_de_casas[i], nombre_de_bebes);
+				estado = nacimientos(westeros, array_de_casas[i], nombre_de_bebes);
 				elegir_casa_ganadora(westeros, array_de_casas[i]);
 			}
 		}
 		anios_transcurridos++;
 	}
-	if(estado== ERROR){
+	if(estado == ERROR){
 		return ERROR;
 	}
-
 	borrar_y_encolar_casas_extintas(westeros, array_de_casas);
-	
+
 	resultado(westeros);
 	fclose(nombre_de_bebes);
 	return estado;
@@ -401,13 +389,12 @@ void ordenar_casas_descendentemente(casa_t** vector, int tope){
 	bool esta_ordenado= false;
 	while(i<tope && !esta_ordenado){
 		esta_ordenado= true;
-		for(int j=0; j < tope-1; j++){
-
+		for(int j = 0; j < tope-1; j++){
 			if(vector[j+1]->cantidad_de_personas > vector[j]->cantidad_de_personas){
-				aux= vector[j+1];
-				vector[j+1]=vector[j];
-				vector[j]=aux;
-				esta_ordenado= false;
+				aux = vector[j+1];
+				vector[j+1] = vector[j];
+				vector[j] = aux;
+				esta_ordenado = false;
 			}
 		}
 		i++;
@@ -415,11 +402,11 @@ void ordenar_casas_descendentemente(casa_t** vector, int tope){
 }
 
 /*
- *Mostrará por pantalla las casas existentes y la cantidad de miembros de forma descendente. 
+ *Mostrará por pantalla las casas existentes y la cantidad de miembros de forma descendente.
  */
 int listar(westeros_t* westeros){
 	printf("\n\nLISTA:\n");
-	if(westeros->cant_casas ==0){
+	if(westeros->cant_casas == 0){
 		printf("---\nNo hay Reinos\n");
 	}
 
@@ -441,7 +428,7 @@ int listar(westeros_t* westeros){
 
 /*
  *Se imprimirá los nombres de las casas extintas en el orden en el que fueron desapareciendo. Luego de ello la cola de casas extintas queda vacia.
- *Devuelve EXITO si 
+ *Devuelve EXITO si
  */
 int extintos(westeros_t* westeros){
 	int estado= EXITO;
@@ -452,7 +439,7 @@ int extintos(westeros_t* westeros){
 		printf("No hay reinos extintos.\n");
 		return EXITO;
 	}
-	int i=0;
+	int i = 0;
 
 	while( i < cola_cantidad(casas_extintas) && estado==EXITO){
 		char* nombre = (char*)cola_primero(casas_extintas);
@@ -462,7 +449,6 @@ int extintos(westeros_t* westeros){
 
 		i++;
 	}
-
 	if(estado == ERROR || !cola_vacia(casas_extintas)){
 		return ERROR;
 	}
@@ -475,28 +461,23 @@ int extintos(westeros_t* westeros){
  *Destruye la estructura del continente liberando la correspondiente memoria.
  */
 void destruir_westeros(westeros_t* westeros){
-
 	casa_t* array_de_casas[westeros->cant_casas];
 
-	int cantidad= arbol_recorrido_inorden(westeros->reino, (void**)array_de_casas, westeros->cant_casas);
+	int cantidad = arbol_recorrido_inorden(westeros->reino, (void**)array_de_casas, westeros->cant_casas);
 
 	for(int i= 0; i < cantidad; i++){
 		arbol_borrar(westeros->reino, (void*)array_de_casas[i]);
 		destructor_de_casas(array_de_casas[i]);
 	}
-
 	if(!cola_vacia(westeros->reinos_extintos)){
 
-		int cant_extintos=cola_cantidad(westeros->reinos_extintos);
-		for(int i=0; i< cant_extintos;i++){	
+		int cant_extintos = cola_cantidad(westeros->reinos_extintos);
+		for(int i = 0; i< cant_extintos;i++){
 			free(cola_primero(westeros->reinos_extintos));
 			cola_desencolar(westeros->reinos_extintos);
 		}
 	}
-
 	cola_destruir(westeros->reinos_extintos);
-	
 	arbol_destruir(westeros->reino);
-
 	free(westeros);
 }
