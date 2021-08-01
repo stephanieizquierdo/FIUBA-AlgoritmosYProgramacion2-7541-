@@ -1,5 +1,11 @@
 # Algoritmos y programación 2 [7541/9515] - FIUBA
 
+<p align="center">
+<img src="https://github.com/stephanieizquierdo/FIUBA-AlgoritmosYProgramacion2-7541-/main/Portada-stephanieIzquierdo.png"
+     alt="Portada"
+     style="float: center; margin-right: 10px;" />                                                                                         
+</p>   
+
 Colección de Trabajos Practicos para el curso Algoritmos y programación 2 - 75.41 Mendez, 2019 2do cuatrimestre.
 
 ### Trabajos prácticos y TDAs realizados
