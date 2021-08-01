@@ -1,16 +1,16 @@
 # Algoritmos y programación 2 [7541/9515] - FIUBA
 
-Colección de apuntes, tps y TDAs realizados para el curso Algoritmos y programación 2 - 75.41 Mendez, 2019 2do cuatrimestre.
+Colección de Trabajos Practicos para el curso Algoritmos y programación 2 - 75.41 Mendez, 2019 2do cuatrimestre.
 
 ### Trabajos prácticos y TDAs realizados
 
-1. TP1  
+1. TP1: Cuervo de Tres Ojos
 2. TDA Pila  
 3. TDA Cola  
 4. TDA Lista  
 5. TDA ABB  
 6. TDA Hash  
-7. TP2
+7. TP2: Simulación Westeros
 
 Todos fueron realizados en lenguaje C.
 
