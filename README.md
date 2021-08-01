@@ -1,7 +1,7 @@
 # Algoritmos y programación 2 [7541/9515] - FIUBA
 
 <p align="center">
-<img src="https://github.com/stephanieizquierdo/FIUBA-AlgoritmosYProgramacion2-7541-/main/Portada-stephanieIzquierdo.png"
+<img src="https://github.com/stephanieizquierdo/FIUBA-AlgoritmosYProgramacion2-7541-/blob/master/Portada-StephanieIzquierdo.png"
      alt="Portada"
      style="float: center; margin-right: 10px;" />                                                                                         
 </p>   
